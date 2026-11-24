@@ -109,18 +109,18 @@ export function Orders() {
               id="orders-filter"
               value={query}
               onChange={(e) => setParams(e.target.value ? { q: e.target.value } : {}, { replace: true })}
-              placeholder="Filter by name, email or order"
-              className="h-10 w-full rounded-xl border border-line bg-panel pl-9 pr-3 text-sm placeholder:text-muted focus:border-brand focus:outline-none"
+              placeholder="Filter orders"
+              className="h-10 w-full rounded-lg border border-line bg-panel pl-9 pr-3 text-sm placeholder:text-muted focus:border-brand focus:outline-none"
             />
           </div>
-          <div role="group" aria-label="Filter by status" className="flex gap-1 overflow-x-auto rounded-xl bg-panel-2 p-1">
+          <div role="group" aria-label="Filter by status" className="flex gap-1 overflow-x-auto rounded-lg bg-panel-2 p-1">
             {statuses.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => setStatus(s)}
                 aria-pressed={status === s}
-                className={cx("shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition", status === s ? "bg-panel text-fg shadow-sm" : "text-muted hover:text-fg")}
+                className={cx("h-8 shrink-0 rounded-md px-3 text-sm transition-colors duration-150", status === s ? "bg-panel text-fg shadow-[0_1px_2px_rgba(0,0,0,0.06)]" : "text-muted hover:text-fg")}
               >
                 {s}
               </button>
@@ -130,12 +130,12 @@ export function Orders() {
 
         {selected.size > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-brand-soft px-4 py-2.5 text-sm" role="status">
-            <span className="font-semibold">{selected.size} selected</span>
+            <span className="font-medium">{selected.size} selected</span>
             <div className="flex gap-2">
-              <button type="button" className="rounded-lg px-3 py-1.5 font-semibold text-brand hover:bg-panel" onClick={() => download(orders.filter((o) => selected.has(o.id)))}>
+              <button type="button" className="rounded-md px-3 py-1.5 font-medium text-brand transition-colors duration-150 hover:bg-panel" onClick={() => download(orders.filter((o) => selected.has(o.id)))}>
                 Export selected
               </button>
-              <button type="button" className="rounded-lg px-3 py-1.5 font-medium text-muted hover:bg-panel hover:text-fg" onClick={() => setSelected(new Set())}>
+              <button type="button" className="rounded-md px-3 py-1.5 text-muted transition-colors duration-150 hover:bg-panel hover:text-fg" onClick={() => setSelected(new Set())}>
                 Clear
               </button>
             </div>
@@ -144,7 +144,7 @@ export function Orders() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-panel-2 text-left text-xs uppercase tracking-wide text-muted">
+            <thead className="bg-panel-2 text-left text-xs text-muted">
               <tr>
                 <th scope="col" className="w-10 py-3 pl-4 pr-1">
                   <input ref={headerBox} type="checkbox" checked={allOnPage} onChange={toggleAll} aria-label="Select all orders on this page" className="size-4 accent-[var(--brand)]" />
@@ -153,10 +153,10 @@ export function Orders() {
                   <th
                     key={c.key}
                     scope="col"
-                    className={cx("px-2 py-3 sm:px-3 font-semibold", c.className)}
+                    className={cx("px-2 py-3 font-medium sm:px-3", c.className)}
                     aria-sort={sort.key === c.key ? (sort.dir === 1 ? "ascending" : "descending") : "none"}
                   >
-                    <button type="button" onClick={() => sortBy(c.key)} className={cx("inline-flex items-center gap-1 uppercase hover:text-fg", c.key === "amount" && "flex-row-reverse")}>
+                    <button type="button" onClick={() => sortBy(c.key)} className={cx("inline-flex items-center gap-1 transition-colors duration-150 hover:text-fg", c.key === "amount" && "flex-row-reverse")}>
                       {c.label}
                       <Icon name={sort.key === c.key ? (sort.dir === 1 ? "chevron-up" : "chevron-down") : "sort"} className={cx("size-3.5", sort.key !== c.key && "opacity-40")} />
                     </button>
@@ -168,7 +168,7 @@ export function Orders() {
               {rows.map((o) => (
                 <tr
                   key={o.id}
-                  className={cx("cursor-pointer transition hover:bg-panel-2", selected.has(o.id) && "bg-brand-soft/60")}
+                  className={cx("cursor-pointer transition-colors duration-150 hover:bg-panel-2", selected.has(o.id) && "bg-brand-soft")}
                   onClick={(e) => {
                     if ((e.target as HTMLElement).closest("input, a, button")) return;
                     navigate(`/orders/${o.id}`);
@@ -177,13 +177,13 @@ export function Orders() {
                   <td className="py-3 pl-4 pr-1">
                     <input type="checkbox" checked={selected.has(o.id)} onChange={() => toggle(o.id)} aria-label={`Select order ${o.id}`} className="size-4 accent-[var(--brand)]" />
                   </td>
-                  <td className="mono hidden px-2 py-3 sm:px-3 font-medium sm:table-cell">
-                    <Link to={`/orders/${o.id}`} className="hover:text-brand hover:underline">
+                  <td className="mono hidden px-2 py-3 text-muted sm:table-cell sm:px-3">
+                    <Link to={`/orders/${o.id}`} className="hover:text-fg hover:underline">
                       {o.id}
                     </Link>
                   </td>
                   <td className="px-2 py-3 sm:px-3">
-                    <p className="font-semibold">{o.customer}</p>
+                    <p className="font-medium">{o.customer}</p>
                     <p className="text-xs text-muted">
                       <span className="sm:hidden">{o.id}</span>
                       <span className="hidden sm:inline">{o.company}</span>
@@ -194,7 +194,7 @@ export function Orders() {
                   <td className="px-2 py-3 sm:px-3">
                     <StatusBadge status={o.status} />
                   </td>
-                  <td className="num px-2 py-3 sm:px-3 pr-4 text-right font-semibold">{formatCurrency(o.amount)}</td>
+                  <td className="num py-3 pl-2 pr-4 text-right font-medium sm:pl-3">{formatCurrency(o.amount)}</td>
                 </tr>
               ))}
               {rows.length === 0 && (
@@ -218,14 +218,14 @@ export function Orders() {
             </select>
           </div>
           <div className="flex items-center justify-between gap-3 sm:justify-end">
-            <p className="text-muted">
+            <p className="num text-muted">
               {filtered.length === 0 ? 0 : page * pageSize + 1} to {Math.min(filtered.length, (page + 1) * pageSize)} of {filtered.length}
             </p>
             <div className="flex gap-1">
-              <button type="button" onClick={() => setPage((p) => p - 1)} disabled={page === 0} className="grid size-9 place-items-center rounded-lg border border-line bg-panel disabled:opacity-40" aria-label="Previous page">
+              <button type="button" onClick={() => setPage((p) => p - 1)} disabled={page === 0} className="grid size-9 place-items-center rounded-lg border border-line bg-panel transition-colors duration-150 hover:bg-panel-2 disabled:opacity-40" aria-label="Previous page">
                 <Icon name="chevron-left" className="size-4" />
               </button>
-              <button type="button" onClick={() => setPage((p) => p + 1)} disabled={page >= pages - 1} className="grid size-9 place-items-center rounded-lg border border-line bg-panel disabled:opacity-40" aria-label="Next page">
+              <button type="button" onClick={() => setPage((p) => p + 1)} disabled={page >= pages - 1} className="grid size-9 place-items-center rounded-lg border border-line bg-panel transition-colors duration-150 hover:bg-panel-2 disabled:opacity-40" aria-label="Next page">
                 <Icon name="chevron-right" className="size-4" />
               </button>
             </div>

@@ -7,7 +7,11 @@ export function formatValue(value: number, kind: "currency" | "number" | "percen
   return number.format(value);
 }
 
+const cents = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 });
+
 export const formatCurrency = (v: number) => currency.format(v);
+// For invoices and totals, where tax makes cents matter. Use it for every figure in that block.
+export const formatCents = (v: number) => cents.format(v);
 export const formatNumber = (v: number) => number.format(v);
 
 export function formatDate(iso: string) {

@@ -19,13 +19,13 @@ export const navSecondary = [
   { label: "Sign up screen", to: "/sign-up", icon: "user-plus" },
 ] as const;
 
-export type Kpi = { label: string; value: number; format: "currency" | "number" | "percent"; change: number; spark: number[] };
+export type Kpi = { label: string; value: number; format: "currency" | "number" | "percent"; change: number };
 
 export const kpis: Kpi[] = [
-  { label: "Monthly recurring revenue", value: 84210, format: "currency", change: 12.4, spark: [52, 55, 54, 60, 63, 61, 68, 72, 75, 79, 81, 84] },
-  { label: "Active subscribers", value: 3127, format: "number", change: 6.8, spark: [2410, 2480, 2530, 2590, 2650, 2700, 2760, 2840, 2910, 2980, 3050, 3127] },
-  { label: "Net revenue retention", value: 108.2, format: "percent", change: 1.9, spark: [101, 102, 103, 102, 104, 105, 104, 106, 106, 107, 108, 108] },
-  { label: "Churn rate", value: 2.1, format: "percent", change: -0.4, spark: [3.1, 3.0, 2.9, 2.9, 2.7, 2.6, 2.6, 2.5, 2.4, 2.3, 2.2, 2.1] },
+  { label: "Monthly recurring revenue", value: 84210, format: "currency", change: 12.4 },
+  { label: "Active subscribers", value: 3127, format: "number", change: 6.8 },
+  { label: "Net revenue retention", value: 108.2, format: "percent", change: 1.9 },
+  { label: "Churn rate", value: 2.1, format: "percent", change: -0.4 },
 ];
 
 export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

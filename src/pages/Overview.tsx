@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Card, PageHeader, buttonClass } from "../components/Card";
-import { AreaChart, BarChart, Donut } from "../components/charts";
+import { AreaChart, BarChart, ShareList } from "../components/charts";
 import { Icon } from "../components/Icon";
 import { KpiCard } from "../components/KpiCard";
 import { StatusBadge } from "../components/StatusBadge";
@@ -17,14 +17,14 @@ export function Overview() {
   return (
     <>
       <PageHeader
-        title={`Good morning, ${app.user.name.split(" ")[0]}`}
-        description="Here's how the business is doing this month."
+        title="Overview"
+        description={`${app.workspace}, recurring revenue and subscribers for 2026`}
         actions={
           <>
             <label className="sr-only" htmlFor="range">
               Date range
             </label>
-            <select id="range" className="h-10 rounded-xl border border-line bg-panel px-3 text-sm font-medium" defaultValue="12m">
+            <select id="range" className="h-10 rounded-lg border border-line bg-panel px-3 text-sm" defaultValue="12m">
               <option value="30d">Last 30 days</option>
               <option value="90d">Last 90 days</option>
               <option value="12m">Last 12 months</option>
@@ -37,7 +37,7 @@ export function Overview() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {kpis.map((k) => (
           <KpiCard key={k.label} kpi={k} goodWhenDown={k.label === "Churn rate"} />
         ))}
@@ -49,15 +49,18 @@ export function Overview() {
           title="Revenue"
           subtitle="Monthly recurring revenue, this year against last"
           action={
-            <div className="hidden items-center gap-4 text-xs text-muted sm:flex">
-              <span className="flex items-center gap-1.5">
-                <span className="h-0.5 w-4 rounded bg-[var(--chart-1)]" />
-                2026
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-0.5 w-4 rounded border-t-2 border-dashed border-[var(--chart-muted)]" />
-                2025
-              </span>
+            <div className="text-right">
+              <p className="num text-2xl font-medium leading-none tracking-[-0.01em]">{formatCurrency(revenue.thisYear[revenue.thisYear.length - 1])}</p>
+              <div className="mt-2 hidden items-center justify-end gap-4 font-mono text-xs text-muted sm:flex">
+                <span className="flex items-center gap-2">
+                  <span className="h-0.5 w-4 rounded bg-[var(--chart-1)]" />
+                  2026
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="w-4 border-t-2 border-dashed border-[var(--chart-muted)]" />
+                  2025
+                </span>
+              </div>
             </div>
           }
         >
@@ -71,16 +74,11 @@ export function Overview() {
           />
         </Card>
         <Card title="Plan mix" subtitle="Active subscribers by plan">
-          <Donut
-            data={planMix}
-            colors={["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)"]}
-            center={
-              <div>
-                <p className="num text-2xl font-semibold">{formatNumber(totalSubs)}</p>
-                <p className="text-xs text-muted">subscribers</p>
-              </div>
-            }
-          />
+          <p className="num text-2xl font-medium leading-none tracking-[-0.01em]">{formatNumber(totalSubs)}</p>
+          <p className="mt-2 text-sm text-muted">subscribers across {planMix.length} plans</p>
+          <div className="mt-6 border-t border-line pt-6">
+            <ShareList data={planMix} format={formatNumber} />
+          </div>
         </Card>
       </div>
 
@@ -92,12 +90,12 @@ export function Overview() {
           <ol className="space-y-4">
             {activity.map((a) => (
               <li key={a.who + a.what} className="flex gap-3">
-                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--chart-muted)]" aria-hidden="true" />
                 <div className="text-sm">
                   <p>
-                    <span className="font-semibold">{a.who}</span> {a.what}
+                    <span className="font-medium">{a.who}</span> <span className="text-muted">{a.what}</span>
                   </p>
-                  <p className="text-xs text-muted">{a.when}</p>
+                  <p className="mt-0.5 font-mono text-xs text-muted">{a.when}</p>
                 </div>
               </li>
             ))}
@@ -106,7 +104,7 @@ export function Overview() {
         <Card
           title="Latest orders"
           action={
-            <Link to="/orders" className="text-sm font-semibold text-brand hover:underline">
+            <Link to="/orders" className="text-sm font-medium text-brand hover:underline">
               View all
             </Link>
           }
@@ -114,15 +112,15 @@ export function Overview() {
           <ul className="divide-y divide-line">
             {orders.slice(0, 5).map((o) => (
               <li key={o.id}>
-                <Link to={`/orders/${o.id}`} className="-mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition hover:bg-panel-2">
+                <Link to={`/orders/${o.id}`} className="-mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors duration-150 hover:bg-panel-2">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{o.customer}</p>
-                    <p className="text-xs text-muted">
+                    <p className="truncate text-sm font-medium">{o.customer}</p>
+                    <p className="font-mono text-xs text-muted">
                       {o.id} &middot; {formatDate(o.date)}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="num text-sm font-semibold">{formatCurrency(o.amount)}</p>
+                    <p className="num text-sm font-medium">{formatCurrency(o.amount)}</p>
                     <StatusBadge status={o.status} />
                   </div>
                 </Link>

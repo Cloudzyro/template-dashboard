@@ -35,15 +35,13 @@
   --line: #e3e5de;
   --fg: #15171b;
   --muted: #5f6570;
-  --brand: #5b4bf0;
-  --brand-soft: #ebe8ff;
-  --up: #157f4b;
-  --down: #c0392b;
-  --chart-1: #5b4bf0;
-  --chart-2: #0d9488;
-  --chart-3: #d97706;
-  --chart-4: #db2777;
-  --chart-muted: #c7cbc2;
+  --brand: #4d7c0f;
+  --brand-soft: #f0f5e4;
+  --up: #15803d;
+  --down: #c2362b;
+  --chart-1: #4d7c0f;
+  --chart-muted: #b9bdb4;
+  --chart-bar: #d6d9d1;
   --grid: #eceee8;
 }
 
@@ -55,15 +53,13 @@
   --line: #262a32;
   --fg: #eef0ea;
   --muted: #9aa1ab;
-  --brand: #9d92ff;
-  --brand-soft: #241f4a;
-  --up: #5ad48f;
-  --down: #ff7b6b;
-  --chart-1: #9d92ff;
-  --chart-2: #2dd4bf;
-  --chart-3: #f5b453;
-  --chart-4: #f472b6;
-  --chart-muted: #3a404a;
+  --brand: #c8f560;
+  --brand-soft: #232a14;
+  --up: #4cc38a;
+  --down: #e5484d;
+  --chart-1: #c8f560;
+  --chart-muted: #4a505a;
+  --chart-bar: #2e333b;
   --grid: #20242b;
 }
 
@@ -75,6 +71,9 @@ body {
 }
 
 @layer base {
+  ::selection {
+    background: var(--brand-soft);
+  }
   :focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: 2px;
@@ -88,7 +87,6 @@ body {
 
 .num {
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
 }
 .mono {
   font-family: var(--font-mono);

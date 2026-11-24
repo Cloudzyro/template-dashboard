@@ -1,6 +1,6 @@
 // Small, dependency-free SVG charts. They size themselves to their container
-// and use the --chart-* colors from index.css, so they follow dark mode.
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+// and use the --chart-* and --grid colors from index.css, so they follow dark mode.
+import { useLayoutEffect, useRef, useState } from "react";
 
 function useWidth<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -47,7 +47,7 @@ export function AreaChart({ labels, series, height = 300, format }: { labels: st
           <defs>
             {series.map((s, i) => (
               <linearGradient key={s.name} id={`area-${i}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor={s.color} stopOpacity="0.28" />
+                <stop offset="0" stopColor={s.color} stopOpacity="0.16" />
                 <stop offset="1" stopColor={s.color} stopOpacity="0" />
               </linearGradient>
             ))}
@@ -55,14 +55,14 @@ export function AreaChart({ labels, series, height = 300, format }: { labels: st
           {ticks.map((t) => (
             <g key={t}>
               <line x1={pad.left} x2={pad.left + w} y1={y(t)} y2={y(t)} stroke="var(--grid)" />
-              <text x={pad.left - 10} y={y(t)} dy="0.32em" textAnchor="end" className="num fill-muted text-[11px]">
+              <text x={pad.left - 10} y={y(t)} dy="0.32em" textAnchor="end" className="num fill-muted font-mono text-[11px]">
                 {format(t)}
               </text>
             </g>
           ))}
           {labels.map((l, i) =>
             labels.length <= 12 || i % 2 === 0 ? (
-              <text key={l} x={x(i)} y={height - 8} textAnchor={i === 0 ? "start" : i === labels.length - 1 ? "end" : "middle"} className="fill-muted text-[11px]">
+              <text key={l} x={x(i)} y={height - 8} textAnchor={i === 0 ? "start" : i === labels.length - 1 ? "end" : "middle"} className="fill-muted font-mono text-[11px]">
                 {width < 480 && i % 2 === 1 ? "" : l}
               </text>
             ) : null,
@@ -76,11 +76,17 @@ export function AreaChart({ labels, series, height = 300, format }: { labels: st
               </g>
             );
           })}
+          {series
+            .filter((s) => s.fill)
+            .map((s) => {
+              const last = s.values.length - 1;
+              return <circle key={`end-${s.name}`} cx={x(last)} cy={y(s.values[last])} r="5" fill="var(--panel)" stroke={s.color} strokeWidth="3" />;
+            })}
           {hover !== null && (
             <g>
               <line x1={x(hover)} x2={x(hover)} y1={pad.top} y2={pad.top + h} stroke="var(--muted)" strokeOpacity="0.4" />
               {series.map((s) => (
-                <circle key={s.name} cx={x(hover)} cy={y(s.values[hover])} r="4.5" fill="var(--panel)" stroke={s.color} strokeWidth="2.5" />
+                <circle key={s.name} cx={x(hover)} cy={y(s.values[hover])} r="4" fill="var(--panel)" stroke={s.color} strokeWidth="2" />
               ))}
             </g>
           )}
@@ -88,17 +94,17 @@ export function AreaChart({ labels, series, height = 300, format }: { labels: st
       )}
       {hover !== null && width > 0 && (
         <div
-          className="pointer-events-none absolute top-2 z-10 min-w-40 rounded-xl border border-line bg-panel px-3 py-2 text-sm shadow-lg"
+          className="pointer-events-none absolute top-2 z-10 min-w-40 rounded-lg border border-line bg-panel px-3 py-2 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
           style={{ left: Math.min(Math.max(x(hover) - 80, 0), width - 170) }}
         >
-          <p className="mb-1 text-xs font-semibold text-muted">{labels[hover]}</p>
+          <p className="mb-1 font-mono text-xs text-muted">{labels[hover]}</p>
           {series.map((s) => (
             <p key={s.name} className="flex items-center justify-between gap-4">
               <span className="flex items-center gap-2">
                 <span className="size-2 rounded-full" style={{ background: s.color }} />
                 {s.name}
               </span>
-              <span className="num font-semibold">{format(s.values[hover])}</span>
+              <span className="num font-medium">{format(s.values[hover])}</span>
             </p>
           ))}
         </div>
@@ -108,28 +114,29 @@ export function AreaChart({ labels, series, height = 300, format }: { labels: st
   );
 }
 
-export function BarChart({ data, height = 220, color = "var(--chart-1)" }: { data: { label: string; value: number }[]; height?: number; color?: string }) {
+export function BarChart({ data, height = 220 }: { data: { label: string; value: number }[]; height?: number }) {
   const [ref, width] = useWidth<HTMLDivElement>();
-  const pad = { top: 22, bottom: 26 };
+  const pad = { top: 24, bottom: 24 };
   const h = height - pad.top - pad.bottom;
   const max = Math.max(...data.map((d) => d.value));
   const slot = width / data.length;
-  const bw = Math.min(36, slot * 0.6);
+  const bw = Math.min(28, slot * 0.56);
   return (
-    <div ref={ref}>
+    <div ref={ref} className="relative">
       {width > 0 && (
         <svg width={width} height={height} role="img" aria-label="Bar chart">
+          <line x1="0" x2={width} y1={pad.top + h} y2={pad.top + h} stroke="var(--grid)" />
           {data.map((d, i) => {
             const bh = (d.value / max) * h;
             const cx = slot * i + slot / 2;
             const last = i === data.length - 1;
             return (
               <g key={d.label}>
-                <rect x={cx - bw / 2} y={pad.top + h - bh} width={bw} height={bh} rx="7" fill={color} opacity={last ? 1 : 0.35} />
-                <text x={cx} y={pad.top + h - bh - 7} textAnchor="middle" className="num fill-fg text-[11px] font-semibold">
+                <rect x={cx - bw / 2} y={pad.top + h - bh} width={bw} height={bh} rx="3" fill={last ? "var(--chart-1)" : "var(--chart-bar)"} />
+                <text x={cx} y={pad.top + h - bh - 8} textAnchor="middle" className={last ? "num fill-fg font-mono text-[11px] font-medium" : "num fill-muted font-mono text-[11px]"}>
                   {d.value}
                 </text>
-                <text x={cx} y={height - 6} textAnchor="middle" className="fill-muted text-[11px]">
+                <text x={cx} y={height - 6} textAnchor="middle" className="fill-muted font-mono text-[11px]">
                   {d.label}
                 </text>
               </g>
@@ -137,77 +144,60 @@ export function BarChart({ data, height = 220, color = "var(--chart-1)" }: { dat
           })}
         </svg>
       )}
-      <DataTableForScreenReaders labels={data.map((d) => d.label)} series={[{ name: "Value", values: data.map((d) => d.value), color }]} format={String} />
+      <DataTableForScreenReaders labels={data.map((d) => d.label)} series={[{ name: "Value", values: data.map((d) => d.value), color: "" }]} format={String} />
     </div>
   );
 }
 
-export function Donut({ data, colors, center }: { data: { label: string; value: number }[]; colors: string[]; center: ReactNode }) {
+// A share as a ranked list with thin bars: easier to read than a donut and
+// quiet enough to sit next to the main chart.
+export function ShareList({ data, format }: { data: { label: string; value: number }[]; format: (v: number) => string }) {
   const total = data.reduce((s, d) => s + d.value, 0);
-  const r = 64;
-  const c = 2 * Math.PI * r;
-  let offset = 0;
+  const max = Math.max(...data.map((d) => d.value));
   return (
-    <div className="flex flex-col items-center gap-6 sm:flex-row lg:flex-col">
-      <div className="relative size-44 shrink-0">
-        <svg viewBox="0 0 160 160" className="size-full -rotate-90" role="img" aria-label="Donut chart">
-          <circle cx="80" cy="80" r={r} fill="none" stroke="var(--grid)" strokeWidth="18" />
-          {data.map((d, i) => {
-            const len = (d.value / total) * c;
-            const el = <circle key={d.label} cx="80" cy="80" r={r} fill="none" stroke={colors[i]} strokeWidth="18" strokeDasharray={`${Math.max(len - 3, 0)} ${c}`} strokeDashoffset={-offset} />;
-            offset += len;
-            return el;
-          })}
-        </svg>
-        <div className="absolute inset-0 grid place-items-center text-center">{center}</div>
-      </div>
-      <ul className="w-full space-y-2.5 text-sm">
-        {data.map((d, i) => (
-          <li key={d.label} className="flex items-center justify-between gap-3">
-            <span className="flex items-center gap-2">
-              <span className="size-2.5 rounded-sm" style={{ background: colors[i] }} aria-hidden="true" />
-              {d.label}
+    <ul className="space-y-4 text-sm">
+      {data.map((d) => (
+        <li key={d.label}>
+          <div className="flex items-baseline justify-between gap-3">
+            <span>{d.label}</span>
+            <span className="num text-muted">
+              <span className="text-fg">{format(d.value)}</span>
+              <span className="ml-2 inline-block w-9 text-right font-mono text-xs">{Math.round((d.value / total) * 100)}%</span>
             </span>
-            <span className="num text-muted">{Math.round((d.value / total) * 100)}%</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export function Sparkline({ values, color }: { values: number[]; color: string }) {
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const pts = values.map((v, i) => `${(i / (values.length - 1)) * 100},${28 - ((v - min) / (max - min || 1)) * 26}`).join(" ");
-  return (
-    <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="h-9 w-full" aria-hidden="true">
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
+          </div>
+          <div className="mt-2 h-1.5 rounded-full bg-[var(--grid)]">
+            <div className="h-full rounded-full bg-[var(--chart-muted)]" style={{ width: `${(d.value / max) * 100}%` }} />
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 function DataTableForScreenReaders({ labels, series, format }: { labels: string[]; series: Series[]; format: (v: number) => string }) {
   return (
-    <table className="sr-only">
-      <thead>
-        <tr>
-          <th>Label</th>
-          {series.map((s) => (
-            <th key={s.name}>{s.name}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {labels.map((l, i) => (
-          <tr key={l}>
-            <th>{l}</th>
+    // Wrapped in a div: a table ignores the 1px height of sr-only and would stretch the page.
+    <div className="sr-only">
+      <table>
+        <thead>
+          <tr>
+            <th>Label</th>
             {series.map((s) => (
-              <td key={s.name}>{format(s.values[i])}</td>
+              <th key={s.name}>{s.name}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {labels.map((l, i) => (
+            <tr key={l}>
+              <th>{l}</th>
+              {series.map((s) => (
+                <td key={s.name}>{format(s.values[i])}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

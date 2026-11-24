@@ -9,7 +9,7 @@ A free React admin dashboard template with KPI cards, charts, a full data table,
 ## What's included
 
 - Sidebar and top bar layout, with a slide-out menu on phones and tablets
-- Overview page: four KPI cards with sparklines, a revenue chart with hover details, a plan mix donut, weekly sign-ups, recent activity and latest orders
+- Overview page: four KPI cards, a revenue chart with hover details, a plan mix breakdown, weekly sign-ups, recent activity and latest orders
 - Charts drawn with plain SVG (no chart library), which follow dark mode and include hidden data tables for screen readers
 - Orders table with sorting, text filter, status filter, pagination, rows per page, row selection and CSV export
 - Order detail page with line items, totals, a timeline and customer details
@@ -31,7 +31,7 @@ pnpm preview    # serve the built site
 ## Make it yours
 
 - **Text, menu, KPIs, chart data and orders:** everything lives in `src/data/dashboard.ts`. Replace the sample arrays with calls to your own API when you're ready.
-- **Colors:** edit the CSS variables in `src/index.css` (`:root` for light, `.dark` for dark). Chart colors are `--chart-1` to `--chart-4`.
+- **Colors:** edit the CSS variables in `src/index.css` (`:root` for light, `.dark` for dark). The accent is `--brand`; chart colors are `--chart-1` (the highlighted series), `--chart-muted` and `--chart-bar`.
 - **Fonts:** Plus Jakarta Sans and JetBrains Mono are self-hosted through Fontsource and imported at the top of `src/index.css`.
 - **Pages:** add a page in `src/pages/`, a route in `src/main.tsx` and a menu item in `src/data/dashboard.ts`.
 - **Sign-in and sign-up:** the screens in `src/pages/Auth.tsx` don't create accounts or check passwords. Connect your auth provider (for example Supabase Auth, Clerk or your own API) in the `onSubmit` handler, and protect the dashboard routes once you have a session.

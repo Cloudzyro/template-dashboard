@@ -4,12 +4,12 @@ import { Icon } from "../components/Icon";
 import { app } from "../data/dashboard";
 import { useTitle } from "../lib/useTitle";
 
-const input = "h-10 w-full rounded-xl border border-line bg-panel px-3 text-sm placeholder:text-muted focus:border-brand focus:outline-none";
+const input = "h-10 w-full rounded-lg border border-line bg-panel px-3 text-sm placeholder:text-muted focus:border-brand focus:outline-none";
 
 function Field({ label, id, hint, children }: { label: string; id: string; hint?: string; children: ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
+      <label htmlFor={id} className="mb-2 block text-sm font-medium">
         {label}
       </label>
       {children}
@@ -23,7 +23,7 @@ function Switch({ id, label, description, defaultOn }: { id: string; label: stri
   return (
     <div className="flex items-start justify-between gap-6 py-4">
       <div>
-        <p id={`${id}-label`} className="text-sm font-semibold">
+        <p id={`${id}-label`} className="text-sm font-medium">
           {label}
         </p>
         <p className="text-sm text-muted">{description}</p>
@@ -34,9 +34,9 @@ function Switch({ id, label, description, defaultOn }: { id: string; label: stri
         aria-checked={on}
         aria-labelledby={`${id}-label`}
         onClick={() => setOn(!on)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? "bg-brand" : "bg-line"}`}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ${on ? "bg-fg" : "bg-line"}`}
       >
-        <span className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-[left] ${on ? "left-[22px]" : "left-0.5"}`} />
+        <span className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-panel shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-transform duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? "translate-x-5" : "translate-x-0"}`} />
       </button>
     </div>
   );
@@ -56,7 +56,7 @@ export function Settings() {
 
   return (
     <>
-      <PageHeader title="Settings" description="Manage your profile, workspace and notifications." />
+      <PageHeader title="Settings" description="Manage your profile, workspace and notifications" />
 
       <div className="grid max-w-4xl gap-4">
         <Card title="Profile" subtitle="How you appear to your team">
@@ -97,7 +97,7 @@ export function Settings() {
             <Field label="Workspace name" id="ws">
               <input id="ws" className={input} defaultValue={app.workspace} required />
             </Field>
-            <Field label="Currency" id="currency" hint="Used for every chart and report.">
+            <Field label="Currency" id="currency" hint="Used for every chart and report">
               <select id="currency" className={input} defaultValue="USD">
                 <option value="USD">US dollar (USD)</option>
                 <option value="CAD">Canadian dollar (CAD)</option>
@@ -115,19 +115,19 @@ export function Settings() {
 
         <Card title="Notifications" subtitle="Choose what lands in your inbox">
           <div className="divide-y divide-line">
-            <Switch id="n-orders" label="New orders" description="An email for every new paid order." defaultOn />
-            <Switch id="n-failed" label="Failed payments" description="Know straight away when a card is declined." defaultOn />
-            <Switch id="n-weekly" label="Weekly summary" description="Revenue, sign-ups and churn every Monday morning." />
+            <Switch id="n-orders" label="New orders" description="An email for every new paid order" defaultOn />
+            <Switch id="n-failed" label="Failed payments" description="An email as soon as a card is declined" defaultOn />
+            <Switch id="n-weekly" label="Weekly summary" description="Revenue, sign-ups and churn every Monday morning" />
           </div>
         </Card>
 
-        <Card title="Danger zone" className="border-rose-500/30">
+        <Card title="Danger zone" className="border-down/30">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-semibold">Delete workspace</p>
+              <p className="text-sm font-medium">Delete workspace</p>
               <p className="text-sm text-muted">Removes every order, customer and report. This can't be undone.</p>
             </div>
-            <button type="button" className="inline-flex h-10 items-center justify-center rounded-xl border border-rose-500/40 px-4 text-sm font-semibold text-down transition hover:bg-rose-500/10">
+            <button type="button" className="inline-flex h-10 items-center justify-center rounded-lg border border-down/40 px-4 text-sm font-medium text-down transition-colors duration-150 hover:bg-down/10">
               Delete workspace
             </button>
           </div>
@@ -136,7 +136,7 @@ export function Settings() {
 
       <div aria-live="polite" className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2">
         {saved && (
-          <p className="flex items-center gap-2 rounded-xl bg-fg px-4 py-3 text-sm font-medium text-canvas shadow-xl">
+          <p className="flex items-center gap-2 rounded-lg bg-fg px-4 py-3 text-sm text-canvas shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
             <Icon name="check" className="size-4" />
             {saved} saved in this demo. Connect your API to keep changes.
           </p>

@@ -1,18 +1,19 @@
 import type { OrderStatus } from "../data/dashboard";
 import { cx } from "../lib/format";
 
-const styles: Record<OrderStatus, string> = {
-  Paid: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
-  Pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
-  Refunded: "bg-slate-500/15 text-slate-600 dark:text-slate-300",
-  Failed: "bg-rose-500/12 text-rose-700 dark:text-rose-300",
+// Status as quiet text with a small dot. The dot carries the color, the word stays readable.
+const dots: Record<OrderStatus, string> = {
+  Paid: "bg-up",
+  Pending: "bg-amber-500",
+  Refunded: "bg-muted/60",
+  Failed: "bg-down",
 };
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
   return (
-    <span className={cx("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold", styles[status])}>
-      <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
-      {status}
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-[13px] text-muted">
+      <span className={cx("size-1.5 rounded-full", dots[status])} aria-hidden="true" />
+      <span className={status === "Failed" ? "text-down" : undefined}>{status}</span>
     </span>
   );
 }

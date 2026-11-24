@@ -12,7 +12,7 @@ export function ThemeToggle() {
     }
   }
   return (
-    <button type="button" onClick={toggle} aria-label="Toggle dark mode" className="grid size-10 place-items-center rounded-xl text-muted transition hover:bg-panel-2 hover:text-fg">
+    <button type="button" onClick={toggle} aria-label="Toggle dark mode" className="grid size-10 place-items-center rounded-lg text-muted transition-colors duration-150 hover:bg-panel-2 hover:text-fg">
       <span className="dark:hidden">
         <Icon name="moon" />
       </span>

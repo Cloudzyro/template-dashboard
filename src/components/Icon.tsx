@@ -23,9 +23,9 @@ const paths: Record<string, string> = {
   check: "M20 6L9 17l-5-5",
 };
 
-export function Icon({ name, className = "size-5" }: { name: string; className?: string }) {
+export function Icon({ name, className = "size-[18px]" }: { name: string; className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d={paths[name] ?? paths.grid} />
     </svg>
   );
